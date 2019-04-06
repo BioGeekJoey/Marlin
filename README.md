@@ -1,4 +1,16 @@
-# Marlin 3D Printer Firmware
+# Marlin 1.1.9 config backup
+
+This repo's sole purpose is to backup my Marlin configuration files for my Creality Ender-3 Pro.
+
+# Hardware
+
+- Ender-3 Pro
+- Makerbase MKS Gen L v1.0 mainboard
+- Antclabs BLTouch V3.0
+- E3D V6 hotend
+- Bullseye full metal extruder clone
+
+# About Marlin 3D Printer Firmware
 
 [![Build Status](https://travis-ci.org/MarlinFirmware/Marlin.svg?branch=RCBugFix)](https://travis-ci.org/MarlinFirmware/Marlin)
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/2224/badge.svg)](https://scan.coverity.com/projects/2224)
