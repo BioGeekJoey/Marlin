@@ -51,5 +51,5 @@
 
 #include "pins_RAMPS.h"
 
-#undef SD_DETECT_PIN
-#define SD_DETECT_PIN -1
+// #undef SD_DETECT_PIN
+// #define SD_DETECT_PIN -1
