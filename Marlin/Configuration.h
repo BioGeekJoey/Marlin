@@ -370,11 +370,9 @@
    #define PID_FUNCTIONAL_RANGE 10 // If the temperature difference between the target temperature and the actual temperature
    // is more than PID_FUNCTIONAL_RANGE then the PID will be shut off and the heater will be set to min/max.
 
-   // If you are using a pre-configured hotend then you can use one of the value sets by uncommenting it
-   // Creality Ender-3
-   #define DEFAULT_Kp 21.73
-   #define DEFAULT_Ki 1.54
-   #define DEFAULT_Kd 76.55
+   #define DEFAULT_Kp 32.21
+   #define DEFAULT_Ki 5.46
+   #define DEFAULT_Kd 47.50
 
    // Ultimaker
    //#define DEFAULT_Kp 22.2
