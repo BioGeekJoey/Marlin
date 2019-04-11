@@ -1014,7 +1014,7 @@
 #if ENABLED(AUTO_BED_LEVELING_LINEAR) || ENABLED(AUTO_BED_LEVELING_BILINEAR)
 
    // Set the number of grid points per dimension.
-   #define GRID_MAX_POINTS_X 4
+   #define GRID_MAX_POINTS_X 3
    #define GRID_MAX_POINTS_Y GRID_MAX_POINTS_X
 
    // Set the boundaries for probing (where the probe can reach).
@@ -1036,7 +1036,7 @@
       // Experimental Subdivision of the grid by Catmull-Rom method.
       // Synthesizes intermediate points to produce a more detailed mesh.
       //
-      //#define ABL_BILINEAR_SUBDIVISION
+      #define ABL_BILINEAR_SUBDIVISION
       #if ENABLED(ABL_BILINEAR_SUBDIVISION)
          // Number of subdivisions between probe points
          #define BILINEAR_SUBDIVISIONS 3
