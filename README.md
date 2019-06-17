@@ -1,12 +1,12 @@
 # Marlin 1.1.9 config backup
 
-This repo's sole purpose is to backup my Marlin configuration files for my Creality Ender-3 Pro.
+This branch's sole purpose is to backup my Marlin configuration files for my Creality Ender-3 Pro.
 
 # Hardware
 
 - Ender-3 Pro
 - Makerbase MKS Gen L v1.0 mainboard
-- Antclabs BLTouch V3.0
+- Antclabs BLTouch V2.3
 - E3D V6 hotend
 - Bullseye full metal extruder clone
 
