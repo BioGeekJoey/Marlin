@@ -1620,7 +1620,7 @@
   #define INTERPOLATE       true  // Interpolate X/Y/Z_MICROSTEPS to 256
 
   #if AXIS_IS_TMC(X)
-    #define X_CURRENT    1100  // (mA) RMS current. Multiply by 1.414 for peak current.
+    #define X_CURRENT     550  // (mA) RMS current. Multiply by 1.414 for peak current.
     #define X_MICROSTEPS   16  // 0..256
     #define X_RSENSE     0.11
   #endif
@@ -1662,7 +1662,7 @@
   #endif
 
   #if AXIS_IS_TMC(E0)
-    #define E0_CURRENT    800
+    #define E0_CURRENT    500
     #define E0_MICROSTEPS X_MICROSTEPS
     #define E0_RSENSE     0.11
   #endif
@@ -1813,9 +1813,9 @@
   #define X2_HYBRID_THRESHOLD    100
   #define Y_HYBRID_THRESHOLD     100
   #define Y2_HYBRID_THRESHOLD    100
-  #define Z_HYBRID_THRESHOLD       3
-  #define Z2_HYBRID_THRESHOLD      3
-  #define Z3_HYBRID_THRESHOLD      3
+  #define Z_HYBRID_THRESHOLD     999
+  #define Z2_HYBRID_THRESHOLD    999
+  #define Z3_HYBRID_THRESHOLD    999
   #define E0_HYBRID_THRESHOLD     30
   #define E1_HYBRID_THRESHOLD     30
   #define E2_HYBRID_THRESHOLD     30
