@@ -1,7 +1,7 @@
 /**
  * Marlin 3D Printer Firmware
  *
- * Copyright (C) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  * Copyright (c) 2016 Bob Cousins bobcousins42@googlemail.com
  * Copyright (c) 2015-2016 Nico Tonnhofer wurstnase.reprap@gmail.com
  * Copyright (c) 2017 Victor Perez
@@ -32,8 +32,9 @@
 // --------------------------------------------------------------------------
 
 #include "HAL.h"
-#include <STM32ADC.h>
 #include "../../inc/MarlinConfig.h"
+
+#include <STM32ADC.h>
 
 // --------------------------------------------------------------------------
 // Externals
@@ -313,5 +314,16 @@ void HAL_adc_start_conversion(const uint8_t adc_pin) {
 }
 
 uint16_t HAL_adc_get_result(void) { return HAL_adc_result; }
+
+uint16_t analogRead(pin_t pin) {
+  const bool is_analog = _GET_MODE(pin) == GPIO_INPUT_ANALOG;
+  return is_analog ? analogRead(uint8_t(pin)) : 0;
+}
+
+// Wrapper to maple unprotected analogWrite
+void analogWrite(pin_t pin, int pwm_val8) {
+  if (PWM_PIN(pin) && IS_OUTPUT(pin))
+    analogWrite(uint8_t(pin), pwm_val8);
+}
 
 #endif // __STM32F1__
