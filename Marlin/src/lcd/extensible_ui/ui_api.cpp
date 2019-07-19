@@ -98,8 +98,12 @@
   #include "../../feature/babystep.h"
 #endif
 
+#if ENABLED(HOST_PROMPT_SUPPORT)
+  #include "../../feature/host_actions.h"
+#endif
+
 inline float clamp(const float value, const float minimum, const float maximum) {
-  return MAX(MIN(value, maximum), minimum);
+  return _MAX(_MIN(value, maximum), minimum);
 }
 
 static struct {
@@ -668,6 +672,8 @@ namespace ExtUI {
             && (linked_nozzles || active_extruder == 0)
           #endif
         ) zprobe_zoffset += mm;
+      #else
+        UNUSED(mm);
       #endif
 
       #if EXTRUDERS > 1
@@ -687,6 +693,7 @@ namespace ExtUI {
         }
       #else
         UNUSED(linked_nozzles);
+        UNUSED(mm);
       #endif
     }
 

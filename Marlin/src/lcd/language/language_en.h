@@ -868,13 +868,16 @@
   #define MSG_AUTORETRACT                     _UxGT("AutoRetr.")
 #endif
 #ifndef MSG_FILAMENT_SWAP_LENGTH
-  #define MSG_FILAMENT_SWAP_LENGTH            _UxGT("Retract Distance")
+  #define MSG_FILAMENT_SWAP_LENGTH            _UxGT("Swap Length")
+#endif
+#ifndef MSG_FILAMENT_PURGE_LENGTH
+  #define MSG_FILAMENT_PURGE_LENGTH           _UxGT("Purge Length")
 #endif
 #ifndef MSG_TOOL_CHANGE
-  #define MSG_TOOL_CHANGE                      _UxGT("Tool Change")
+  #define MSG_TOOL_CHANGE                     _UxGT("Tool Change")
 #endif
 #ifndef MSG_TOOL_CHANGE_ZLIFT
-  #define MSG_TOOL_CHANGE_ZLIFT                _UxGT("Z Raise")
+  #define MSG_TOOL_CHANGE_ZLIFT               _UxGT("Z Raise")
 #endif
 #ifndef MSG_SINGLENOZZLE_PRIME_SPD
   #define MSG_SINGLENOZZLE_PRIME_SPD          _UxGT("Prime Speed")
@@ -961,7 +964,7 @@
   #define MSG_TOUCHMI_ZTEST                   _UxGT("Z offset Test")
 #endif
 #ifndef MSG_TOUCHMI_SAVE
- #define MSG_TOUCHMI_SAVE                     _UxGT("Save")
+  #define MSG_TOUCHMI_SAVE                    _UxGT("Save")
 #endif
 #ifndef MSG_MANUAL_DEPLOY_TOUCHMI
   #define MSG_MANUAL_DEPLOY_TOUCHMI           _UxGT("Deploy TouchMI")

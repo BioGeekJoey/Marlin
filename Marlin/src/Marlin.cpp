@@ -57,6 +57,10 @@
 #include "gcode/parser.h"
 #include "gcode/queue.h"
 
+#if ENABLED(TOUCH_BUTTONS)
+  #include "feature/touch/xpt2046.h"
+#endif
+
 #if ENABLED(HOST_ACTION_COMMANDS)
   #include "feature/host_actions.h"
 #endif
@@ -860,7 +864,7 @@ void setup() {
 
   setup_killpin();
 
-  #if HAS_DRIVER(TMC2208) || HAS_DRIVER(TMC2209)
+  #if HAS_TMC220x
     tmc_serial_begin();
   #endif
 
@@ -941,8 +945,10 @@ void setup() {
 
   // Load data from EEPROM if available (or use defaults)
   // This also updates variables in the planner, elsewhere
-  #if DISABLED(SD_EEPROM_EMULATION)
-    (void)settings.load();
+  settings.first_load();
+
+  #if ENABLED(TOUCH_BUTTONS)
+    touch.init();
   #endif
 
   #if HAS_M206_COMMAND
@@ -1096,17 +1102,8 @@ void setup() {
     init_closedloop();
   #endif
 
-  #if !HAS_SPI_LCD
-
-    #if ENABLED(SD_EEPROM_EMULATION)
-      SERIAL_ECHOLNPGM("Loading settings from SD");
-      (void)settings.load();
-    #endif
-
-    #if ENABLED(INIT_SDCARD_ON_BOOT)
-      card.beginautostart();
-    #endif
-
+  #if ENABLED(INIT_SDCARD_ON_BOOT) && !HAS_SPI_LCD
+    card.beginautostart();
   #endif
 
   #if HAS_TRINAMIC && DISABLED(PS_DEFAULT_OFF)

@@ -81,10 +81,6 @@
 
 #include "../Marlin.h"
 
-#if ENABLED(SD_EEPROM_EMULATION)
-  #include "../module/configuration_store.h"
-#endif
-
 #if ENABLED(POWER_LOSS_RECOVERY)
   #include "../feature/power_loss_recovery.h"
 #endif
@@ -105,6 +101,11 @@
   volatile uint8_t MarlinUI::buttons;
   #if HAS_SLOW_BUTTONS
     volatile uint8_t MarlinUI::slow_buttons;
+  #endif
+  #if ENABLED(TOUCH_BUTTONS)
+    #include "../feature/touch/xpt2046.h"
+    volatile uint8_t MarlinUI::touch_buttons;
+    uint8_t MarlinUI::read_touch_buttons() { return touch.read_buttons(); }
   #endif
 #endif
 
@@ -154,7 +155,7 @@ millis_t next_button_update_ms;
             static uint8_t filename_scroll_hash;
             if (filename_scroll_hash != hash) {                              // If the hash changed...
               filename_scroll_hash = hash;                                   // Save the new hash
-              filename_scroll_max = MAX(0, utf8_strlen(theCard.longFilename) - maxlen); // Update the scroll limit
+              filename_scroll_max = _MAX(0, utf8_strlen(theCard.longFilename) - maxlen); // Update the scroll limit
               filename_scroll_pos = 0;                                       // Reset scroll to the start
               lcd_status_update_delay = 8;                                   // Don't scroll right away
             }
@@ -328,8 +329,13 @@ void MarlinUI::init() {
     #endif
   #endif
 
-  #if HAS_ENCODER_ACTION && HAS_SLOW_BUTTONS
-    slow_buttons = 0;
+  #if HAS_ENCODER_ACTION
+    #if HAS_SLOW_BUTTONS
+      slow_buttons = 0;
+    #endif
+    #if ENABLED(TOUCH_BUTTONS)
+      touch_buttons = 0;
+    #endif
   #endif
 
   update_buttons();
@@ -386,7 +392,7 @@ bool MarlinUI::get_blink() {
         #if HAS_ENCODER_ACTION
           refresh(LCDVIEW_REDRAW_NOW);
           #if HAS_LCD_MENU
-            if (encoderDirection == -1) {     // ADC_KEYPAD forces REVERSE_MENU_DIRECTION, so this indicates menu navigation
+            if (encoderDirection == -(ENCODERBASE)) { // ADC_KEYPAD forces REVERSE_MENU_DIRECTION, so this indicates menu navigation
                    if (RRK(EN_KEYPAD_UP))     encoderPosition += ENCODER_STEPS_PER_MENU_ITEM;
               else if (RRK(EN_KEYPAD_DOWN))   encoderPosition -= ENCODER_STEPS_PER_MENU_ITEM;
               else if (RRK(EN_KEYPAD_LEFT))   { MenuItem_back::action(); quick_feedback(); }
@@ -430,7 +436,7 @@ bool MarlinUI::get_blink() {
 
           if (RRK(EN_KEYPAD_MIDDLE))  goto_screen(menu_move);
 
-          #if DISABLED(DELTA) && Z_HOME_DIR == -1
+          #if DISABLED(DELTA) && Z_HOME_DIR < 0
             if (RRK(EN_KEYPAD_F2))    _reprapworld_keypad_move(Z_AXIS,  1);
           #endif
 
@@ -474,7 +480,6 @@ bool MarlinUI::get_blink() {
 void MarlinUI::status_screen() {
 
   #if HAS_LCD_MENU
-    encoder_direction_normal();
     ENCODER_RATE_MULTIPLY(false);
   #endif
 
@@ -552,7 +557,7 @@ void MarlinUI::status_screen() {
     else if ((old_frm < 100 && new_frm > 100) || (old_frm > 100 && new_frm < 100))
       new_frm = 100;
 
-    new_frm = constrain(new_frm, 10, 999);
+    LIMIT(new_frm, 10, 999);
 
     if (old_frm != new_frm) {
       feedrate_percentage = new_frm;
@@ -787,13 +792,8 @@ void MarlinUI::update() {
       if (sd_status) {
         safe_delay(500); // Some boards need a delay to get settled
         card.initsd();
-        if (old_sd_status == 2) {
-          #if ENABLED(SD_EEPROM_EMULATION)
-            SERIAL_ECHOLNPGM("Loading settings from SD");
-            (void)settings.load();
-          #endif
+        if (old_sd_status == 2)
           card.beginautostart();  // Initial boot
-        }
         else
           set_status_P(PSTR(MSG_SD_INSERTED));
       }
@@ -832,6 +832,11 @@ void MarlinUI::update() {
 
     next_lcd_update_ms = ms + LCD_UPDATE_INTERVAL;
 
+    #if ENABLED(TOUCH_BUTTONS)
+      if (on_status_screen())
+        next_lcd_update_ms += (LCD_UPDATE_INTERVAL) * 2;
+    #endif
+
     #if ENABLED(LCD_HAS_STATUS_INDICATORS)
       update_indicators();
     #endif
@@ -840,6 +845,10 @@ void MarlinUI::update() {
 
       #if HAS_SLOW_BUTTONS
         slow_buttons = read_slow_buttons(); // Buttons that take too long to read in interrupt context
+      #endif
+
+      #if ENABLED(TOUCH_BUTTONS)
+        touch_buttons = read_touch_buttons();
       #endif
 
       #if ENABLED(REPRAPWORLD_KEYPAD)
@@ -1189,6 +1198,9 @@ void MarlinUI::update() {
           #if HAS_SLOW_BUTTONS
             | slow_buttons
           #endif
+          #if ENABLED(TOUCH_BUTTONS)
+            | touch_buttons
+          #endif
         ;
       #elif HAS_ADC_BUTTONS
         buttons = 0;
@@ -1509,13 +1521,15 @@ void MarlinUI::update() {
     uint8_t MarlinUI::get_progress() {
       #if ENABLED(LCD_SET_PROGRESS_MANUALLY)
         uint8_t &progress = progress_bar_percent;
+        #define _PLIMIT(P) ((P) & 0x7F)
       #else
+        #define _PLIMIT(P) P
         uint8_t progress = 0;
       #endif
       #if ENABLED(SDSUPPORT)
         if (IS_SD_PRINTING()) progress = card.percentDone();
       #endif
-      return progress;
+      return _PLIMIT(progress);
     }
   #endif
 
